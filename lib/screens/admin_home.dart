@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:juan_million/screens/admin_tabs/community_tab.dart';
 import 'package:juan_million/screens/admin_tabs/wallet_tab.dart';
 import 'package:juan_million/utlis/colors.dart';
 
@@ -16,7 +17,7 @@ class _AdminHomeState extends State<AdminHome> {
 
   List tabs = [
     const WalletTab(),
-    const SizedBox(),
+    const CommunityTab(),
   ];
   @override
   Widget build(BuildContext context) {
