@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:juan_million/screens/admin_home.dart';
 import 'package:juan_million/screens/auth/customer_signup_screen.dart';
 import 'package:juan_million/screens/auth/signup_screen.dart';
 import 'package:juan_million/screens/business_home_screen.dart';
@@ -83,7 +84,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 if (username.text == 'admin@juan4all.com' &&
                     password.text == 'juan4all') {
                   Navigator.of(context).pushReplacement(MaterialPageRoute(
-                      builder: (context) => const CustomerHomeScreen()));
+                      builder: (context) => const AdminHome()));
                 } else {
                   showToast('Invalid admin credentials!');
                 }
