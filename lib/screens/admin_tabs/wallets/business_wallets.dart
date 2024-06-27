@@ -30,12 +30,6 @@ class _BusinessWalletsState extends State<BusinessWallets> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    TextWidget(
-                      text: 'Total Affiliates',
-                      fontSize: 14,
-                      fontFamily: 'Regular',
-                      color: Colors.black,
-                    ),
                     StreamBuilder<QuerySnapshot>(
                         stream: FirebaseFirestore.instance
                             .collection('Business')
@@ -59,7 +53,45 @@ class _BusinessWalletsState extends State<BusinessWallets> {
 
                           final data = snapshot.requireData;
                           return TextWidget(
-                            text: '${data.docs.length.toString()} Affiliates',
+                            text:
+                                '${data.docs.length.toString()} Total Affiliates',
+                            fontSize: 14,
+                            fontFamily: 'Regular',
+                            color: Colors.black,
+                          );
+                        }),
+                    StreamBuilder<QuerySnapshot>(
+                        stream: FirebaseFirestore.instance
+                            .collection('Business')
+                            .snapshots(),
+                        builder: (BuildContext context,
+                            AsyncSnapshot<QuerySnapshot> snapshot) {
+                          if (snapshot.hasError) {
+                            print(snapshot.error);
+                            return const Center(child: Text('Error'));
+                          }
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const Padding(
+                              padding: EdgeInsets.only(top: 50),
+                              child: Center(
+                                  child: CircularProgressIndicator(
+                                color: Colors.black,
+                              )),
+                            );
+                          }
+
+                          final data = snapshot.requireData;
+
+                          List itemData = data.docs;
+                          int total = 0;
+
+                          for (int i = 0; i < itemData.length; i++) {
+                            total +=
+                                int.parse(itemData[i]['wallet'].toString());
+                          }
+                          return TextWidget(
+                            text: AppConstants.formatNumberWithPeso(total),
                             fontSize: 28,
                             fontFamily: 'Bold',
                             color: primary,

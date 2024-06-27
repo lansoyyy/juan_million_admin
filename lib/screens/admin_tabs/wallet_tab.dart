@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:juan_million/screens/admin_tabs/wallets/business_wallets.dart';
+import 'package:juan_million/screens/admin_tabs/wallets/company_wallet.dart';
+import 'package:juan_million/screens/admin_tabs/wallets/it_wallet.dart';
 import 'package:juan_million/screens/admin_tabs/wallets/member_wallets.dart';
 import 'package:juan_million/utlis/app_constants.dart';
 import 'package:juan_million/widgets/text_widget.dart';
@@ -36,31 +38,39 @@ class WalletTab extends StatelessWidget {
                     return const Center(child: CircularProgressIndicator());
                   }
                   dynamic walletdata = snapshot.data;
-                  return Container(
-                    width: 170,
-                    height: 150,
-                    decoration: BoxDecoration(
-                      color: primary,
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        TextWidget(
-                          text: AppConstants.formatNumberWithPeso(
-                              walletdata['pts']),
-                          fontSize: 32,
-                          fontFamily: 'Bold',
-                          color: Colors.white,
-                        ),
-                        TextWidget(
-                          text: 'Company Income',
-                          fontSize: 12,
-                          fontFamily: 'Regular',
-                          color: Colors.white,
-                        ),
-                      ],
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => CompanyWallet(
+                                total: walletdata['pts'],
+                              )));
+                    },
+                    child: Container(
+                      width: 170,
+                      height: 150,
+                      decoration: BoxDecoration(
+                        color: primary,
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          TextWidget(
+                            text: AppConstants.formatNumberWithPeso(
+                                walletdata['pts']),
+                            fontSize: 32,
+                            fontFamily: 'Bold',
+                            color: Colors.white,
+                          ),
+                          TextWidget(
+                            text: 'Company Income',
+                            fontSize: 12,
+                            fontFamily: 'Regular',
+                            color: Colors.white,
+                          ),
+                        ],
+                      ),
                     ),
                   );
                 }),
@@ -79,31 +89,39 @@ class WalletTab extends StatelessWidget {
                     return const Center(child: CircularProgressIndicator());
                   }
                   dynamic walletdata = snapshot.data;
-                  return Container(
-                    width: 170,
-                    height: 150,
-                    decoration: BoxDecoration(
-                      color: primary,
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        TextWidget(
-                          text: AppConstants.formatNumberWithPeso(
-                              walletdata['pts']),
-                          fontSize: 32,
-                          fontFamily: 'Bold',
-                          color: Colors.white,
-                        ),
-                        TextWidget(
-                          text: 'Tech Support Income',
-                          fontSize: 12,
-                          fontFamily: 'Regular',
-                          color: Colors.white,
-                        ),
-                      ],
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => ITWallet(
+                                total: walletdata['pts'],
+                              )));
+                    },
+                    child: Container(
+                      width: 170,
+                      height: 150,
+                      decoration: BoxDecoration(
+                        color: primary,
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          TextWidget(
+                            text: AppConstants.formatNumberWithPeso(
+                                walletdata['pts']),
+                            fontSize: 32,
+                            fontFamily: 'Bold',
+                            color: Colors.white,
+                          ),
+                          TextWidget(
+                            text: 'Tech Support Income',
+                            fontSize: 12,
+                            fontFamily: 'Regular',
+                            color: Colors.white,
+                          ),
+                        ],
+                      ),
                     ),
                   );
                 }),
