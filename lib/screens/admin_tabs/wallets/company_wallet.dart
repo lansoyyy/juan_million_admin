@@ -101,7 +101,7 @@ class _CompanyWalletState extends State<CompanyWallet> {
                               fontSize: 14,
                             )),
                             DataCell(TextWidget(
-                              text: 'P 5,000',
+                              text: 'P 5,500',
                               fontSize: 14,
                             )),
                             DataCell(TextWidget(

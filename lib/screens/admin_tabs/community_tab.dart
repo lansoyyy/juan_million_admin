@@ -163,7 +163,7 @@ class _CommunityTabState extends State<CommunityTab> {
                                   }
                                   dynamic mydata = snapshot.data;
                                   return TextWidget(
-                                    text: '${mydata['pts'].toString()} pts',
+                                    text: '${mydata['pts'].toInt()} pts',
                                     fontSize: 14,
                                   );
                                 }),
