@@ -199,9 +199,14 @@ class _BusinessWalletsState extends State<BusinessWallets> {
                                 fontSize: 14,
                               ),
                             ),
-                            DataCell(TextWidget(
-                              text: data.docs[i]['name'],
-                              fontSize: 14,
+                            DataCell(GestureDetector(
+                              onTap: () {
+                                showDetails(data.docs[i]);
+                              },
+                              child: TextWidget(
+                                text: data.docs[i]['name'],
+                                fontSize: 14,
+                              ),
                             )),
                             DataCell(TextWidget(
                               text: AppConstants.formatNumberWithPeso(
@@ -216,6 +221,77 @@ class _BusinessWalletsState extends State<BusinessWallets> {
           ),
         ),
       ),
+    );
+  }
+
+  showDetails(data) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                width: 150,
+                height: 150,
+                decoration: BoxDecoration(
+                  color: Colors.grey,
+                  image: DecorationImage(
+                    fit: BoxFit.cover,
+                    image: NetworkImage(
+                      data['logo'],
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              TextWidget(
+                text: data['name'],
+                fontSize: 18,
+                fontFamily: 'Bold',
+              ),
+              TextWidget(
+                text: data['clarification'],
+                fontSize: 12,
+                fontFamily: 'Medium',
+              ),
+              const Divider(),
+              TextWidget(
+                text: data['email'],
+                fontSize: 12,
+                fontFamily: 'Medium',
+              ),
+              TextWidget(
+                text: data['phone'],
+                fontSize: 12,
+                fontFamily: 'Medium',
+              ),
+              const Divider(),
+              TextWidget(
+                text: data['address'],
+                fontSize: 12,
+                fontFamily: 'Medium',
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: TextWidget(
+                text: 'Close',
+                fontSize: 14,
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }
