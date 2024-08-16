@@ -103,7 +103,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 // var snapshot = await document.get();
 
                 // print(snapshot['version']);
-                if (username.text == 'admin@juan4all.com' &&
+                if (username.text == 'rcojuan4all@gmail.com' &&
                     password.text == 'juan4all') {
                   Navigator.of(context).pushReplacement(MaterialPageRoute(
                       builder: (context) => const AdminHome()));
