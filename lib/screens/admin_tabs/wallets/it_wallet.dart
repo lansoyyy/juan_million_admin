@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:juan_million/utlis/app_constants.dart';
 import 'package:juan_million/utlis/colors.dart';
+import 'package:juan_million/widgets/textfield_widget.dart';
+import 'package:juan_million/widgets/toast_widget.dart';
 
 import '../../../widgets/text_widget.dart';
 
@@ -20,6 +22,7 @@ class ITWallet extends StatefulWidget {
 }
 
 class _ITWalletState extends State<ITWallet> {
+  final amount = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,11 +41,74 @@ class _ITWalletState extends State<ITWallet> {
                       fontFamily: 'Regular',
                       color: Colors.black,
                     ),
-                    TextWidget(
-                      text: AppConstants.formatNumberWithPeso(widget.total),
-                      fontSize: 28,
-                      fontFamily: 'Bold',
-                      color: primary,
+                    Row(
+                      children: [
+                        TextWidget(
+                          text: AppConstants.formatNumberWithPeso(widget.total),
+                          fontSize: 28,
+                          fontFamily: 'Bold',
+                          color: primary,
+                        ),
+                        IconButton(
+                          onPressed: () {
+                            showDialog(
+                              context: context,
+                              builder: (context) {
+                                return AlertDialog(
+                                  content: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      TextFieldWidget(
+                                        inputType: TextInputType.number,
+                                        controller: amount,
+                                        label: 'Enter cashout amount',
+                                        hint: 'Enter cashout amount',
+                                      ),
+                                    ],
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      child: TextWidget(
+                                        text: 'Close',
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                    TextButton(
+                                      onPressed: () async {
+                                        if (widget.total >
+                                            int.parse(amount.text)) {
+                                          await FirebaseFirestore.instance
+                                              .collection('Community Wallet')
+                                              .doc('it')
+                                              .update({
+                                            'pts': FieldValue.increment(
+                                                -int.parse(amount.text))
+                                          });
+                                        } else {
+                                          showToast('Insufficient balance!');
+                                        }
+
+                                        Navigator.pop(context);
+                                      },
+                                      child: TextWidget(
+                                        text: 'Continue',
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                          },
+                          icon: Icon(
+                            Icons.input,
+                            color: primary,
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
