@@ -10,8 +10,15 @@ import 'screens/auth/login_screen.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
-    name: 'juan-million',
-    options: DefaultFirebaseOptions.currentPlatform,
+   
+    options: FirebaseOptions(
+     apiKey: "AIzaSyA3leMjuJqGHG6BSU-fTkG2ex4AhG_73og",
+      authDomain: "juan-million.firebaseapp.com",
+      projectId: "juan-million",
+      storageBucket: "juan-million.appspot.com",
+      messagingSenderId: "863618395212",
+      appId: "1:863618395212:web:93821de4f8c53f5e9fd8e9"
+    )
   );
   runApp(const MyApp());
 }
