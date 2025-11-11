@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return const GetMaterialApp(
       title: 'Juan 4 All - Admin',
-      home: AdminHome(),
+      home: LoginScreen(),
     );
   }
 }

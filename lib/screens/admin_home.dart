@@ -66,7 +66,7 @@ class _AdminHomeState extends State<AdminHome> {
                     fontFamily: 'Regular',
                   ),
                   labelType: constraints.maxWidth >= 1200
-                    ? NavigationRailLabelType.all
+                    ? null
                     : NavigationRailLabelType.selected,
                 ),
                 const VerticalDivider(thickness: 1, width: 1),
