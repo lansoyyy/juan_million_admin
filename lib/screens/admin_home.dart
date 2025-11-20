@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:juan_million/screens/admin_tabs/community_tab.dart';
 import 'package:juan_million/screens/admin_tabs/wallet_tab.dart';
+import 'package:juan_million/screens/admin_tabs/templates_tab.dart';
+import 'package:juan_million/screens/admin_tabs/reports_tab.dart';
 import 'package:juan_million/utlis/colors.dart';
 
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
@@ -18,17 +20,20 @@ class _AdminHomeState extends State<AdminHome> {
   List tabs = [
     const WalletTab(),
     const CommunityTab(),
+    const TemplatesTab(),
+    const ReportsTab(),
   ];
-  
+
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
         // Define responsive breakpoints
         final isMobile = constraints.maxWidth < 600;
-        final isTablet = constraints.maxWidth >= 600 && constraints.maxWidth < 1200;
+        final isTablet =
+            constraints.maxWidth >= 600 && constraints.maxWidth < 1200;
         final isDesktop = constraints.maxWidth >= 1200;
-        
+
         if (isDesktop) {
           // Use navigation rail for desktop
           return Scaffold(
@@ -50,8 +55,19 @@ class _AdminHomeState extends State<AdminHome> {
                     ),
                     NavigationRailDestination(
                       icon: Icon(Icons.groups_2_outlined),
-                      selectedIcon: Icon(Icons.groups_2_outlined, color: Colors.white),
+                      selectedIcon:
+                          Icon(Icons.groups_2_outlined, color: Colors.white),
                       label: Text('Community Wallet'),
+                    ),
+                    NavigationRailDestination(
+                      icon: Icon(Icons.settings),
+                      selectedIcon: Icon(Icons.settings, color: Colors.white),
+                      label: Text('Templates'),
+                    ),
+                    NavigationRailDestination(
+                      icon: Icon(Icons.bar_chart),
+                      selectedIcon: Icon(Icons.bar_chart, color: Colors.white),
+                      label: Text('Reports'),
                     ),
                   ],
                   backgroundColor: blue,
@@ -66,8 +82,8 @@ class _AdminHomeState extends State<AdminHome> {
                     fontFamily: 'Regular',
                   ),
                   labelType: constraints.maxWidth >= 1200
-                    ? null
-                    : NavigationRailLabelType.selected,
+                      ? null
+                      : NavigationRailLabelType.selected,
                 ),
                 const VerticalDivider(thickness: 1, width: 1),
                 Expanded(
@@ -97,7 +113,8 @@ class _AdminHomeState extends State<AdminHome> {
                     ),
                     NavigationRailDestination(
                       icon: Icon(Icons.groups_2_outlined),
-                      selectedIcon: Icon(Icons.groups_2_outlined, color: Colors.white),
+                      selectedIcon:
+                          Icon(Icons.groups_2_outlined, color: Colors.white),
                       label: Text('Community Wallet'),
                     ),
                   ],
@@ -146,6 +163,22 @@ class _AdminHomeState extends State<AdminHome> {
                   icon: const Icon(Icons.groups_2_outlined),
                   title: const Text(
                     "Community Wallet",
+                    style: TextStyle(fontFamily: 'Bold'),
+                  ),
+                  selectedColor: Colors.white,
+                ),
+                SalomonBottomBarItem(
+                  icon: const Icon(Icons.settings),
+                  title: const Text(
+                    "Templates",
+                    style: TextStyle(fontFamily: 'Bold'),
+                  ),
+                  selectedColor: Colors.white,
+                ),
+                SalomonBottomBarItem(
+                  icon: const Icon(Icons.bar_chart),
+                  title: const Text(
+                    "Reports",
                     style: TextStyle(fontFamily: 'Bold'),
                   ),
                   selectedColor: Colors.white,
