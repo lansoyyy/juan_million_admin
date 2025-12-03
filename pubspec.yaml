@@ -45,6 +45,7 @@ dependencies:
   flutter_barcode_scanner:
   paymongo_sdk:
   image_picker:
+  file_picker:
   salomon_bottom_bar:
   get:
 

@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:juan_million/utlis/colors.dart';
 import 'package:juan_million/widgets/text_widget.dart';
@@ -50,18 +51,39 @@ class _CoordinatorSettingsPageState extends State<CoordinatorSettingsPage> {
     }
   }
 
+  String _getContentTypeFromExtension(String fileName) {
+    final ext = fileName.split('.').last.toLowerCase();
+    switch (ext) {
+      case 'jpg':
+      case 'jpeg':
+        return 'image/jpeg';
+      case 'png':
+        return 'image/png';
+      case 'pdf':
+        return 'application/pdf';
+      case 'doc':
+        return 'application/msword';
+      case 'docx':
+        return 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+      default:
+        return 'application/octet-stream';
+    }
+  }
+
   Future<void> _uploadTemplate(String type) async {
-    final picker = ImagePicker();
-    XFile? picked;
-
     try {
-      picked = await picker.pickImage(
-        source: ImageSource.gallery,
-        maxWidth: 1920,
+      final result = await FilePicker.platform.pickFiles(
+        withData: true,
+        type: FileType.custom,
+        allowedExtensions: ['jpg', 'jpeg', 'png', 'pdf', 'doc', 'docx'],
       );
-      if (picked == null) return;
 
-      final fileName = picked.name;
+      if (result == null || result.files.isEmpty) return;
+
+      final pickedFile = result.files.single;
+      if (pickedFile.bytes == null) return;
+
+      final fileName = pickedFile.name;
 
       showDialog(
         context: context,
@@ -89,11 +111,12 @@ class _CoordinatorSettingsPageState extends State<CoordinatorSettingsPage> {
 
       final ref = firebase_storage.FirebaseStorage.instance
           .ref('AdminTemplates/coordinator/$type/$fileName');
-      final bytes = await picked.readAsBytes();
+      final bytes = pickedFile.bytes!;
+      final contentType = _getContentTypeFromExtension(fileName);
 
       await ref.putData(
         bytes,
-        firebase_storage.SettableMetadata(contentType: 'image/jpeg'),
+        firebase_storage.SettableMetadata(contentType: contentType),
       );
 
       final url = await ref.getDownloadURL();
