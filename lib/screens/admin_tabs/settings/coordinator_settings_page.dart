@@ -63,7 +63,7 @@ class _CoordinatorSettingsPageState extends State<CoordinatorSettingsPage> {
 
       final fileName = picked.name;
 
-      await showDialog(
+      showDialog(
         context: context,
         barrierDismissible: false,
         builder: (context) {
