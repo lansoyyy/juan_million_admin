@@ -24,19 +24,28 @@ class _CommunityTabState extends State<CommunityTab> {
         builder: (context, constraints) {
           // Define responsive breakpoints
           final isMobile = constraints.maxWidth < 600;
-          final isTablet = constraints.maxWidth >= 600 && constraints.maxWidth < 1200;
+          final isTablet =
+              constraints.maxWidth >= 600 && constraints.maxWidth < 1200;
           final isDesktop = constraints.maxWidth >= 1200;
-          
+
           // Calculate padding based on screen size
-          final horizontalPadding = isMobile ? 12.0 : isTablet ? 20.0 : 24.0;
-          final verticalPadding = isMobile ? 12.0 : isTablet ? 20.0 : 24.0;
-          
+          final horizontalPadding = isMobile
+              ? 12.0
+              : isTablet
+                  ? 20.0
+                  : 24.0;
+          final verticalPadding = isMobile
+              ? 12.0
+              : isTablet
+                  ? 20.0
+                  : 24.0;
+
           // Calculate font sizes based on screen size
           final titleFontSize = isMobile ? 12.0 : 14.0;
           final balanceFontSize = isMobile ? 24.0 : 32.0;
           final headerFontSize = isMobile ? 14.0 : 16.0;
           final dataFontSize = isMobile ? 12.0 : 14.0;
-          
+
           return Padding(
             padding: EdgeInsets.all(isMobile ? 12.0 : 15.0),
             child: SingleChildScrollView(
@@ -57,8 +66,8 @@ class _CommunityTabState extends State<CommunityTab> {
                               .collection('Community Wallet')
                               .doc('wallet')
                               .snapshots(),
-                          builder:
-                              (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+                          builder: (context,
+                              AsyncSnapshot<DocumentSnapshot> snapshot) {
                             if (!snapshot.hasData) {
                               return const Center(child: Text('Loading'));
                             } else if (snapshot.hasError) {
@@ -69,12 +78,15 @@ class _CommunityTabState extends State<CommunityTab> {
                               return const Center(
                                   child: CircularProgressIndicator());
                             }
-                            dynamic walletdata = snapshot.data;
+                            final docSnap = snapshot.data!;
+                            final map = docSnap.data() as Map<String, dynamic>?;
+                            final int pts = (map != null && map['pts'] is num)
+                                ? (map['pts'] as num).toInt()
+                                : 0;
                             return FittedBox(
                               fit: BoxFit.scaleDown,
                               child: TextWidget(
-                                text: AppConstants.formatNumberWithPeso(
-                                    walletdata['pts']),
+                                text: AppConstants.formatNumberWithPeso(pts),
                                 fontSize: balanceFontSize,
                                 fontFamily: 'Bold',
                                 color: primary,
@@ -84,7 +96,7 @@ class _CommunityTabState extends State<CommunityTab> {
                     ],
                   ),
                   SizedBox(height: isMobile ? 15.0 : 20.0),
-                  
+
                   // Data display - either table or cards based on screen size
                   StreamBuilder<QuerySnapshot>(
                       stream: FirebaseFirestore.instance
@@ -96,9 +108,11 @@ class _CommunityTabState extends State<CommunityTab> {
                           print(snapshot.error);
                           return const Center(child: Text('Error'));
                         }
-                        if (snapshot.connectionState == ConnectionState.waiting) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
                           return Padding(
-                            padding: EdgeInsets.only(top: isMobile ? 30.0 : 50.0),
+                            padding:
+                                EdgeInsets.only(top: isMobile ? 30.0 : 50.0),
                             child: const Center(
                                 child: CircularProgressIndicator(
                               color: Colors.black,
@@ -108,105 +122,126 @@ class _CommunityTabState extends State<CommunityTab> {
 
                         final data = snapshot.requireData;
 
+                        if (data.docs.isEmpty) {
+                          return Padding(
+                            padding:
+                                EdgeInsets.only(top: isMobile ? 30.0 : 50.0),
+                            child: const Center(
+                              child: Text('No slots found'),
+                            ),
+                          );
+                        }
+
                         // For desktop and tablet, show the DataTable
                         if (isDesktop || isTablet) {
                           return DataTable(
-                            columnSpacing: isTablet ? 15.0 : 30.0,
-                            horizontalMargin: isTablet ? 10.0 : 20.0,
-                            headingRowHeight: isTablet ? 50.0 : 56.0,
-                            dataRowHeight: isTablet ? 45.0 : 56.0,
-                            columns: [
-                              DataColumn(
-                                label: TextWidget(
-                                  text: 'Slot',
-                                  fontSize: headerFontSize,
-                                  fontFamily: 'Bold',
+                              columnSpacing: isTablet ? 15.0 : 30.0,
+                              horizontalMargin: isTablet ? 10.0 : 20.0,
+                              headingRowHeight: isTablet ? 50.0 : 56.0,
+                              dataRowHeight: isTablet ? 45.0 : 56.0,
+                              columns: [
+                                DataColumn(
+                                  label: TextWidget(
+                                    text: 'Slot',
+                                    fontSize: headerFontSize,
+                                    fontFamily: 'Bold',
+                                  ),
                                 ),
-                              ),
-                              DataColumn(
-                                label: TextWidget(
-                                  text: 'Name',
-                                  fontSize: headerFontSize,
-                                  fontFamily: 'Bold',
+                                DataColumn(
+                                  label: TextWidget(
+                                    text: 'Name',
+                                    fontSize: headerFontSize,
+                                    fontFamily: 'Bold',
+                                  ),
                                 ),
-                              ),
-                              DataColumn(
-                                label: TextWidget(
-                                  text: 'Points',
-                                  fontSize: headerFontSize,
-                                  fontFamily: 'Bold',
+                                DataColumn(
+                                  label: TextWidget(
+                                    text: 'Points',
+                                    fontSize: headerFontSize,
+                                    fontFamily: 'Bold',
+                                  ),
                                 ),
-                              ),
-                            ],
-                            rows: [
-                              for (int i = 0; i < data.docs.length; i++)
-                                DataRow(cells: [
-                                  DataCell(
-                                    TextWidget(
-                                      text: '${i + 1}',
-                                      fontSize: dataFontSize,
+                              ],
+                              rows: [
+                                for (int i = 0; i < data.docs.length; i++)
+                                  DataRow(cells: [
+                                    DataCell(
+                                      TextWidget(
+                                        text: '${i + 1}',
+                                        fontSize: dataFontSize,
+                                      ),
                                     ),
-                                  ),
-                                  DataCell(
-                                    StreamBuilder<DocumentSnapshot>(
-                                        stream: FirebaseFirestore.instance
-                                            .collection('Users')
-                                            .doc(data.docs[i]['uid'])
-                                            .snapshots(),
-                                        builder: (context,
-                                            AsyncSnapshot<DocumentSnapshot> snapshot) {
-                                          if (!snapshot.hasData) {
-                                            return const Center(child: Text('Loading'));
-                                          } else if (snapshot.hasError) {
-                                            return const Center(
-                                                child: Text('Something went wrong'));
-                                          } else if (snapshot.connectionState ==
-                                              ConnectionState.waiting) {
-                                            return const Center(
-                                                child: CircularProgressIndicator());
-                                          }
-                                          dynamic mydata = snapshot.data;
-                                          return TextWidget(
-                                            text: mydata['name'],
-                                            fontSize: dataFontSize,
-                                          );
-                                        }),
-                                  ),
-                                  DataCell(
-                                    StreamBuilder<DocumentSnapshot>(
-                                        stream: FirebaseFirestore.instance
-                                            .collection('Users')
-                                            .doc(data.docs[i]['uid'])
-                                            .snapshots(),
-                                        builder: (context,
-                                            AsyncSnapshot<DocumentSnapshot> snapshot) {
-                                          if (!snapshot.hasData) {
-                                            return const Center(child: Text('Loading'));
-                                          } else if (snapshot.hasError) {
-                                            return const Center(
-                                                child: Text('Something went wrong'));
-                                          } else if (snapshot.connectionState ==
-                                              ConnectionState.waiting) {
-                                            return const Center(
-                                                child: CircularProgressIndicator());
-                                          }
-                                          dynamic mydata = snapshot.data;
-                                          return TextWidget(
-                                            text: '${mydata['pts'].toInt()} pts',
-                                            fontSize: dataFontSize,
-                                          );
-                                        }),
-                                  ),
-                                ])
-                            ]
-                          );
+                                    DataCell(
+                                      StreamBuilder<DocumentSnapshot>(
+                                          stream: FirebaseFirestore.instance
+                                              .collection('Users')
+                                              .doc(data.docs[i]['uid'])
+                                              .snapshots(),
+                                          builder: (context,
+                                              AsyncSnapshot<DocumentSnapshot>
+                                                  snapshot) {
+                                            if (!snapshot.hasData) {
+                                              return const Center(
+                                                  child: Text('Loading'));
+                                            } else if (snapshot.hasError) {
+                                              return const Center(
+                                                  child: Text(
+                                                      'Something went wrong'));
+                                            } else if (snapshot
+                                                    .connectionState ==
+                                                ConnectionState.waiting) {
+                                              return const Center(
+                                                  child:
+                                                      CircularProgressIndicator());
+                                            }
+                                            dynamic mydata = snapshot.data;
+                                            return TextWidget(
+                                              text: mydata['name'],
+                                              fontSize: dataFontSize,
+                                            );
+                                          }),
+                                    ),
+                                    DataCell(
+                                      StreamBuilder<DocumentSnapshot>(
+                                          stream: FirebaseFirestore.instance
+                                              .collection('Users')
+                                              .doc(data.docs[i]['uid'])
+                                              .snapshots(),
+                                          builder: (context,
+                                              AsyncSnapshot<DocumentSnapshot>
+                                                  snapshot) {
+                                            if (!snapshot.hasData) {
+                                              return const Center(
+                                                  child: Text('Loading'));
+                                            } else if (snapshot.hasError) {
+                                              return const Center(
+                                                  child: Text(
+                                                      'Something went wrong'));
+                                            } else if (snapshot
+                                                    .connectionState ==
+                                                ConnectionState.waiting) {
+                                              return const Center(
+                                                  child:
+                                                      CircularProgressIndicator());
+                                            }
+                                            dynamic mydata = snapshot.data;
+                                            return TextWidget(
+                                              text:
+                                                  '${mydata['pts'].toInt()} pts',
+                                              fontSize: dataFontSize,
+                                            );
+                                          }),
+                                    ),
+                                  ])
+                              ]);
                         }
-                        
+
                         // For mobile, show a card-based layout
                         return Column(
                           children: [
                             for (int i = 0; i < data.docs.length; i++)
-                              _buildMobileSlotCard(i, data.docs[i], dataFontSize, isMobile)
+                              _buildMobileSlotCard(
+                                  i, data.docs[i], dataFontSize, isMobile)
                           ],
                         );
                       })
@@ -219,11 +254,12 @@ class _CommunityTabState extends State<CommunityTab> {
     );
   }
 
-  Widget _buildMobileSlotCard(int index, DocumentSnapshot slotDoc, double fontSize, bool isSmallMobile) {
+  Widget _buildMobileSlotCard(int index, DocumentSnapshot slotDoc,
+      double fontSize, bool isSmallMobile) {
     final cardWidth = isSmallMobile ? double.infinity : null;
     final cardPadding = isSmallMobile ? 12.0 : 16.0;
     final spacing = isSmallMobile ? 8.0 : 12.0;
-    
+
     return Container(
       width: cardWidth,
       margin: EdgeInsets.only(bottom: spacing),
@@ -262,24 +298,21 @@ class _CommunityTabState extends State<CommunityTab> {
             ],
           ),
           SizedBox(height: spacing),
-          
+
           // User name
           StreamBuilder<DocumentSnapshot>(
               stream: FirebaseFirestore.instance
                   .collection('Users')
                   .doc(slotDoc['uid'])
                   .snapshots(),
-              builder: (context,
-                  AsyncSnapshot<DocumentSnapshot> snapshot) {
+              builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
                 if (!snapshot.hasData) {
                   return const Center(child: Text('Loading'));
                 } else if (snapshot.hasError) {
-                  return const Center(
-                      child: Text('Something went wrong'));
+                  return const Center(child: Text('Something went wrong'));
                 } else if (snapshot.connectionState ==
                     ConnectionState.waiting) {
-                  return const Center(
-                      child: CircularProgressIndicator());
+                  return const Center(child: CircularProgressIndicator());
                 }
                 dynamic mydata = snapshot.data;
                 return Row(
@@ -295,26 +328,23 @@ class _CommunityTabState extends State<CommunityTab> {
                   ],
                 );
               }),
-          
-          SizedBox(height: spacing/2),
-          
+
+          SizedBox(height: spacing / 2),
+
           // Points
           StreamBuilder<DocumentSnapshot>(
               stream: FirebaseFirestore.instance
                   .collection('Users')
                   .doc(slotDoc['uid'])
                   .snapshots(),
-              builder: (context,
-                  AsyncSnapshot<DocumentSnapshot> snapshot) {
+              builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
                 if (!snapshot.hasData) {
                   return const Center(child: Text('Loading'));
                 } else if (snapshot.hasError) {
-                  return const Center(
-                      child: Text('Something went wrong'));
+                  return const Center(child: Text('Something went wrong'));
                 } else if (snapshot.connectionState ==
                     ConnectionState.waiting) {
-                  return const Center(
-                      child: CircularProgressIndicator());
+                  return const Center(child: CircularProgressIndicator());
                 }
                 dynamic mydata = snapshot.data;
                 return Row(

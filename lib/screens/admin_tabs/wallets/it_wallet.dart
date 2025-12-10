@@ -136,6 +136,11 @@ class _ITWalletState extends State<ITWallet> {
                       }
 
                       final data = snapshot.requireData;
+                      if (data.docs.isEmpty) {
+                        return const Center(
+                          child: Text('No transactions found'),
+                        );
+                      }
 
                       return DataTable(columns: [
                         DataColumn(

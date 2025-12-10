@@ -167,6 +167,11 @@ class _MemberWalletsState extends State<MemberWallets> {
                       }
 
                       final data = snapshot.requireData;
+                      if (data.docs.isEmpty) {
+                        return const Center(
+                          child: Text('No members found.'),
+                        );
+                      }
 
                       return DataTable(columns: [
                         DataColumn(
