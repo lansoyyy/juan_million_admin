@@ -168,15 +168,17 @@ class _CompanyWalletState extends State<CompanyWallet> {
                         for (int i = 0; i < data.docs.length; i++)
                           DataRow(cells: [
                             DataCell(TextWidget(
-                              text: data.docs[i]['name'],
+                              text: data.docs[i]['name'] ?? 'Unknown',
                               fontSize: 14,
                             )),
                             DataCell(TextWidget(
-                              text: 'P 5,500',
+                              text: AppConstants.formatNumberWithPeso(
+                                  data.docs[i]['received'] ?? 0),
                               fontSize: 14,
                             )),
                             DataCell(TextWidget(
-                              text: 'P 2,400',
+                              text: AppConstants.formatNumberWithPeso(
+                                  data.docs[i]['companyIncome'] ?? 0),
                               fontSize: 14,
                             )),
                           ])
