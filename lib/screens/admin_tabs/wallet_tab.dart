@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:juan_million/screens/admin_tabs/wallets/business_wallets.dart';
 import 'package:juan_million/screens/admin_tabs/wallets/company_wallet.dart';
+import 'package:juan_million/screens/admin_tabs/wallets/coordinator_wallets.dart';
 import 'package:juan_million/screens/admin_tabs/wallets/it_wallet.dart';
 import 'package:juan_million/screens/admin_tabs/wallets/member_wallets.dart';
 import 'package:juan_million/utlis/app_constants.dart';
@@ -19,9 +20,10 @@ class WalletTab extends StatelessWidget {
       builder: (context, constraints) {
         // Define responsive breakpoints
         final isMobile = constraints.maxWidth < 600;
-        final isTablet = constraints.maxWidth >= 600 && constraints.maxWidth < 1200;
+        final isTablet =
+            constraints.maxWidth >= 600 && constraints.maxWidth < 1200;
         final isDesktop = constraints.maxWidth >= 1200;
-        
+
         // Calculate container dimensions based on screen size
         final containerWidth = isMobile ? constraints.maxWidth * 0.4 : 170.0;
         final containerHeight = isMobile ? 120.0 : 150.0;
@@ -29,11 +31,19 @@ class WalletTab extends StatelessWidget {
         final labelFontSize = isMobile ? 10.0 : 12.0;
         final iconSize = isMobile ? 50.0 : 75.0;
         final spacing = isMobile ? 10.0 : 20.0;
-        
+
         // Calculate padding based on screen size
-        final horizontalPadding = isMobile ? 16.0 : isTablet ? 24.0 : 32.0;
-        final verticalPadding = isMobile ? 16.0 : isTablet ? 24.0 : 40.0;
-        
+        final horizontalPadding = isMobile
+            ? 16.0
+            : isTablet
+            ? 24.0
+            : 32.0;
+        final verticalPadding = isMobile
+            ? 16.0
+            : isTablet
+            ? 24.0
+            : 40.0;
+
         return Padding(
           padding: EdgeInsets.symmetric(
             horizontal: horizontalPadding,
@@ -49,37 +59,100 @@ class WalletTab extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    _buildCompanyWalletCard(containerWidth, containerHeight, fontSize, labelFontSize, context),
-                    _buildITWalletCard(containerWidth, containerHeight, fontSize, labelFontSize, context),
+                    _buildCompanyWalletCard(
+                      containerWidth,
+                      containerHeight,
+                      fontSize,
+                      labelFontSize,
+                      context,
+                    ),
+                    _buildITWalletCard(
+                      containerWidth,
+                      containerHeight,
+                      fontSize,
+                      labelFontSize,
+                      context,
+                    ),
                   ],
                 )
               else
                 Column(
                   children: [
-                    _buildCompanyWalletCard(containerWidth, containerHeight, fontSize, labelFontSize, context),
+                    _buildCompanyWalletCard(
+                      containerWidth,
+                      containerHeight,
+                      fontSize,
+                      labelFontSize,
+                      context,
+                    ),
                     SizedBox(height: spacing),
-                    _buildITWalletCard(containerWidth, containerHeight, fontSize, labelFontSize, context),
+                    _buildITWalletCard(
+                      containerWidth,
+                      containerHeight,
+                      fontSize,
+                      labelFontSize,
+                      context,
+                    ),
                   ],
                 ),
-              
+
               SizedBox(height: spacing),
-              
+
               // Second row of wallet cards
               if (isDesktop || isTablet)
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    _buildBusinessWalletCard(containerWidth, containerHeight, iconSize, labelFontSize, context),
-                    _buildMemberWalletCard(containerWidth, containerHeight, iconSize, labelFontSize, context),
+                    _buildBusinessWalletCard(
+                      containerWidth,
+                      containerHeight,
+                      iconSize,
+                      labelFontSize,
+                      context,
+                    ),
+                    _buildMemberWalletCard(
+                      containerWidth,
+                      containerHeight,
+                      iconSize,
+                      labelFontSize,
+                      context,
+                    ),
+                    _buildCoordinatorWalletCard(
+                      containerWidth,
+                      containerHeight,
+                      iconSize,
+                      labelFontSize,
+                      context,
+                    ),
                   ],
                 )
               else
                 Column(
                   children: [
-                    _buildBusinessWalletCard(containerWidth, containerHeight, iconSize, labelFontSize, context),
+                    _buildBusinessWalletCard(
+                      containerWidth,
+                      containerHeight,
+                      iconSize,
+                      labelFontSize,
+                      context,
+                    ),
                     SizedBox(height: spacing),
-                    _buildMemberWalletCard(containerWidth, containerHeight, iconSize, labelFontSize, context),
+                    _buildMemberWalletCard(
+                      containerWidth,
+                      containerHeight,
+                      iconSize,
+                      labelFontSize,
+                      context,
+                    ),
+                    SizedBox(height: spacing),
+                    _buildCoordinatorWalletCard(
+                      containerWidth,
+                      containerHeight,
+                      iconSize,
+                      labelFontSize,
+                      context,
+                    ),
                   ],
                 ),
             ],
@@ -89,7 +162,13 @@ class WalletTab extends StatelessWidget {
     );
   }
 
-  Widget _buildCompanyWalletCard(double width, double height, double fontSize, double labelFontSize, BuildContext context) {
+  Widget _buildCompanyWalletCard(
+    double width,
+    double height,
+    double fontSize,
+    double labelFontSize,
+    BuildContext context,
+  ) {
     return Builder(
       builder: (context) {
         return StreamBuilder<DocumentSnapshot>(
@@ -108,10 +187,12 @@ class WalletTab extends StatelessWidget {
             dynamic walletdata = snapshot.data;
             return GestureDetector(
               onTap: () {
-                Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => CompanyWallet(
-                          total: walletdata['pts'],
-                        )));
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        CompanyWallet(total: walletdata['pts']),
+                  ),
+                );
               },
               child: Container(
                 width: width,
@@ -125,7 +206,9 @@ class WalletTab extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     TextWidget(
-                      text: AppConstants.formatNumberWithPeso(walletdata['pts']),
+                      text: AppConstants.formatNumberWithPeso(
+                        walletdata['pts'],
+                      ),
                       fontSize: fontSize,
                       fontFamily: 'Bold',
                       color: Colors.white,
@@ -142,11 +225,17 @@ class WalletTab extends StatelessWidget {
             );
           },
         );
-      }
+      },
     );
   }
 
-  Widget _buildITWalletCard(double width, double height, double fontSize, double labelFontSize, BuildContext context) {
+  Widget _buildITWalletCard(
+    double width,
+    double height,
+    double fontSize,
+    double labelFontSize,
+    BuildContext context,
+  ) {
     return Builder(
       builder: (context) {
         return StreamBuilder<DocumentSnapshot>(
@@ -165,10 +254,11 @@ class WalletTab extends StatelessWidget {
             dynamic walletdata = snapshot.data;
             return GestureDetector(
               onTap: () {
-                Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => ITWallet(
-                          total: walletdata['pts'],
-                        )));
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => ITWallet(total: walletdata['pts']),
+                  ),
+                );
               },
               child: Container(
                 width: width,
@@ -182,7 +272,9 @@ class WalletTab extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     TextWidget(
-                      text: AppConstants.formatNumberWithPeso(walletdata['pts']),
+                      text: AppConstants.formatNumberWithPeso(
+                        walletdata['pts'],
+                      ),
                       fontSize: fontSize,
                       fontFamily: 'Bold',
                       color: Colors.white,
@@ -199,15 +291,22 @@ class WalletTab extends StatelessWidget {
             );
           },
         );
-      }
+      },
     );
   }
 
-  Widget _buildBusinessWalletCard(double width, double height, double iconSize, double labelFontSize, BuildContext context) {
+  Widget _buildBusinessWalletCard(
+    double width,
+    double height,
+    double iconSize,
+    double labelFontSize,
+    BuildContext context,
+  ) {
     return GestureDetector(
       onTap: () {
-        Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => const BusinessWallets()));
+        Navigator.of(context).push(
+          MaterialPageRoute(builder: (context) => const BusinessWallets()),
+        );
       },
       child: Container(
         width: width,
@@ -220,11 +319,7 @@ class WalletTab extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Icon(
-              Icons.business,
-              size: iconSize,
-              color: Colors.white,
-            ),
+            Icon(Icons.business, size: iconSize, color: Colors.white),
             TextWidget(
               text: 'Affiliates',
               fontSize: labelFontSize,
@@ -237,11 +332,18 @@ class WalletTab extends StatelessWidget {
     );
   }
 
-  Widget _buildMemberWalletCard(double width, double height, double iconSize, double labelFontSize, BuildContext context) {
+  Widget _buildMemberWalletCard(
+    double width,
+    double height,
+    double iconSize,
+    double labelFontSize,
+    BuildContext context,
+  ) {
     return GestureDetector(
       onTap: () {
-        Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => const MemberWallets()));
+        Navigator.of(
+          context,
+        ).push(MaterialPageRoute(builder: (context) => const MemberWallets()));
       },
       child: Container(
         width: width,
@@ -254,13 +356,46 @@ class WalletTab extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Icon(
-              Icons.person,
-              size: iconSize,
-              color: Colors.white,
-            ),
+            Icon(Icons.person, size: iconSize, color: Colors.white),
             TextWidget(
               text: 'Members',
+              fontSize: labelFontSize,
+              fontFamily: 'Regular',
+              color: Colors.white,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCoordinatorWalletCard(
+    double width,
+    double height,
+    double iconSize,
+    double labelFontSize,
+    BuildContext context,
+  ) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(builder: (context) => const CoordinatorWallets()),
+        );
+      },
+      child: Container(
+        width: width,
+        height: height,
+        decoration: BoxDecoration(
+          color: secondary,
+          borderRadius: BorderRadius.circular(15),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Icon(Icons.supervisor_account, size: iconSize, color: Colors.white),
+            TextWidget(
+              text: 'Coordinators',
               fontSize: labelFontSize,
               fontFamily: 'Regular',
               color: Colors.white,
