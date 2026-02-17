@@ -7,8 +7,6 @@ import 'package:juan_million/widgets/toast_widget.dart';
 
 import '../../../widgets/text_widget.dart';
 
-import 'package:intl/intl.dart' show DateFormat, toBeginningOfSentenceCase;
-
 class CompanyWallet extends StatefulWidget {
   int total;
 
@@ -42,7 +40,7 @@ class _CompanyWalletState extends State<CompanyWallet> {
                       children: [
                         TextWidget(
                           text: AppConstants.formatNumberWithPeso(
-                            widget.total ?? 0,
+                            widget.total,
                           ),
                           fontSize: 28,
                           fontFamily: 'Bold',
@@ -78,16 +76,16 @@ class _CompanyWalletState extends State<CompanyWallet> {
                                     TextButton(
                                       onPressed: () async {
                                         if (amount.text.isNotEmpty &&
-                                            (widget.total ?? 0) >
+                                            widget.total >
                                                 int.parse(amount.text)) {
                                           await FirebaseFirestore.instance
                                               .collection('Community Wallet')
                                               .doc('business')
                                               .update({
-                                                'pts': FieldValue.increment(
-                                                  -int.parse(amount.text),
-                                                ),
-                                              });
+                                            'pts': FieldValue.increment(
+                                              -int.parse(amount.text),
+                                            ),
+                                          });
                                         } else {
                                           showToast('Insufficient balance!');
                                         }
@@ -114,93 +112,95 @@ class _CompanyWalletState extends State<CompanyWallet> {
                 StreamBuilder<QuerySnapshot>(
                   stream: FirebaseFirestore.instance
                       .collection('History')
+                      .orderBy('dateTime', descending: true)
                       .snapshots(),
-                  builder:
-                      (
-                        BuildContext context,
-                        AsyncSnapshot<QuerySnapshot> snapshot,
-                      ) {
-                        if (snapshot.hasError) {
-                          print(snapshot.error);
-                          return const Center(
-                            child: Text('Error loading data'),
-                          );
-                        }
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return const Padding(
-                            padding: EdgeInsets.only(top: 50),
-                            child: Center(
-                              child: CircularProgressIndicator(
-                                color: Colors.black,
-                              ),
-                            ),
-                          );
-                        }
+                  builder: (
+                    BuildContext context,
+                    AsyncSnapshot<QuerySnapshot> snapshot,
+                  ) {
+                    if (snapshot.hasError) {
+                      print(snapshot.error);
+                      return const Center(
+                        child: Text('Error loading data'),
+                      );
+                    }
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Padding(
+                        padding: EdgeInsets.only(top: 50),
+                        child: Center(
+                          child: CircularProgressIndicator(
+                            color: Colors.black,
+                          ),
+                        ),
+                      );
+                    }
 
-                        final data = snapshot.data;
-                        if (data == null || data.docs.isEmpty) {
-                          return const Padding(
-                            padding: EdgeInsets.only(top: 50),
-                            child: Center(child: Text('No transactions found')),
-                          );
-                        }
+                    final data = snapshot.data;
+                    if (data == null || data.docs.isEmpty) {
+                      return const Padding(
+                        padding: EdgeInsets.only(top: 50),
+                        child: Center(child: Text('No transactions found')),
+                      );
+                    }
 
-                        return DataTable(
-                          columns: [
-                            DataColumn(
-                              label: TextWidget(
-                                text: 'Member',
-                                fontSize: 16,
-                                fontFamily: 'Bold',
-                              ),
+                    return SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: DataTable(
+                        columns: [
+                          DataColumn(
+                            label: TextWidget(
+                              text: 'Member',
+                              fontSize: 16,
+                              fontFamily: 'Bold',
                             ),
-                            DataColumn(
-                              label: TextWidget(
-                                text: 'Received',
-                                fontSize: 16,
-                                fontFamily: 'Bold',
-                              ),
+                          ),
+                          DataColumn(
+                            label: TextWidget(
+                              text: 'Received',
+                              fontSize: 16,
+                              fontFamily: 'Bold',
                             ),
-                            DataColumn(
-                              label: TextWidget(
-                                text: 'Company Income',
-                                fontSize: 16,
-                                fontFamily: 'Bold',
-                              ),
+                          ),
+                          DataColumn(
+                            label: TextWidget(
+                              text: 'Company Income',
+                              fontSize: 16,
+                              fontFamily: 'Bold',
                             ),
-                          ],
-                          rows: [
-                            for (int i = 0; i < data.docs.length; i++)
-                              DataRow(
-                                cells: [
-                                  DataCell(
-                                    TextWidget(
-                                      text: data.docs[i]['name'] ?? 'Unknown',
-                                      fontSize: 14,
-                                    ),
+                          ),
+                        ],
+                        rows: [
+                          for (int i = 0; i < data.docs.length; i++)
+                            DataRow(
+                              cells: [
+                                DataCell(
+                                  TextWidget(
+                                    text: data.docs[i]['name'] ?? 'Unknown',
+                                    fontSize: 14,
                                   ),
-                                  DataCell(
-                                    TextWidget(
-                                      text: AppConstants.formatNumberWithPeso(
-                                        data.docs[i]['received'] ?? 0,
-                                      ),
-                                      fontSize: 14,
+                                ),
+                                DataCell(
+                                  TextWidget(
+                                    text: AppConstants.formatNumberWithPeso(
+                                      data.docs[i]['received'] ?? 0,
                                     ),
+                                    fontSize: 14,
                                   ),
-                                  DataCell(
-                                    TextWidget(
-                                      text: AppConstants.formatNumberWithPeso(
-                                        data.docs[i]['companyIncome'] ?? 0,
-                                      ),
-                                      fontSize: 14,
+                                ),
+                                DataCell(
+                                  TextWidget(
+                                    text: AppConstants.formatNumberWithPeso(
+                                      data.docs[i]['companyIncome'] ?? 0,
                                     ),
+                                    fontSize: 14,
                                   ),
-                                ],
-                              ),
-                          ],
-                        );
-                      },
+                                ),
+                              ],
+                            ),
+                        ],
+                      ),
+                    );
+                  },
                 ),
               ],
             ),

@@ -36,13 +36,13 @@ class WalletTab extends StatelessWidget {
         final horizontalPadding = isMobile
             ? 16.0
             : isTablet
-            ? 24.0
-            : 32.0;
+                ? 24.0
+                : 32.0;
         final verticalPadding = isMobile
             ? 16.0
             : isTablet
-            ? 24.0
-            : 40.0;
+                ? 24.0
+                : 40.0;
 
         return Padding(
           padding: EdgeInsets.symmetric(
@@ -185,12 +185,14 @@ class WalletTab extends StatelessWidget {
               return const Center(child: CircularProgressIndicator());
             }
             dynamic walletdata = snapshot.data;
+            final dynamic rawPts = walletdata['pts'];
+            final int ptsValue = rawPts is num ? rawPts.toInt() : 0;
+
             return GestureDetector(
               onTap: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (context) =>
-                        CompanyWallet(total: walletdata['pts']),
+                    builder: (context) => CompanyWallet(total: ptsValue),
                   ),
                 );
               },

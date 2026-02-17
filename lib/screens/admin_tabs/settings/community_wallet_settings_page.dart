@@ -67,21 +67,53 @@ class _CommunityWalletSettingsPageState
       return;
     }
 
+    final totalRewards = double.tryParse(totalRewardsController.text) ?? 0;
+    final capacity = double.tryParse(capacityController.text) ?? 0;
+
+    // Save to settings document
     await FirebaseFirestore.instance
         .collection('Community Wallet')
         .doc('settings')
         .set({
-      'totalRewards': double.tryParse(totalRewardsController.text) ?? 0,
-      'capacity': double.tryParse(capacityController.text) ?? 0,
+      'totalRewards': totalRewards,
+      'capacity': capacity,
       'companyPercent': company,
       'itPercent': it,
       'rewardsPercent': rewards,
       'updatedAt': DateTime.now(),
     }, SetOptions(merge: true));
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Community wallet settings saved.')),
-    );
+    // Also update the business wallet document with new values
+    await FirebaseFirestore.instance
+        .collection('Community Wallet')
+        .doc('business')
+        .set({
+      'totalRewards': totalRewards,
+      'capacity': capacity,
+      'companyPercent': company,
+      'itPercent': it,
+      'rewardsPercent': rewards,
+      'updatedAt': DateTime.now(),
+    }, SetOptions(merge: true));
+
+    // Also update the IT wallet document
+    await FirebaseFirestore.instance
+        .collection('Community Wallet')
+        .doc('it')
+        .set({
+      'totalRewards': totalRewards,
+      'capacity': capacity,
+      'companyPercent': company,
+      'itPercent': it,
+      'rewardsPercent': rewards,
+      'updatedAt': DateTime.now(),
+    }, SetOptions(merge: true));
+
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Community wallet settings saved.')),
+      );
+    }
   }
 
   @override

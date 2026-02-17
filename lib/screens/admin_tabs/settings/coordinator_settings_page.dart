@@ -214,6 +214,13 @@ class _CoordinatorSettingsPageState extends State<CoordinatorSettingsPage> {
   }
 
   Widget _buildDocumentPreview(String title, String url) {
+    final bool isPdf = url.toLowerCase().endsWith('.pdf');
+    final bool isImage = url.toLowerCase().endsWith('.jpg') ||
+        url.toLowerCase().endsWith('.jpeg') ||
+        url.toLowerCase().endsWith('.png') ||
+        url.toLowerCase().endsWith('.gif') ||
+        url.toLowerCase().endsWith('.webp');
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -224,33 +231,167 @@ class _CoordinatorSettingsPageState extends State<CoordinatorSettingsPage> {
         ),
         const SizedBox(height: 8),
         if (url.isEmpty)
-          const Text(
-            'No file submitted',
-            style: TextStyle(fontFamily: 'Regular', color: Colors.grey),
-          )
-        else
           Container(
-            height: 180,
+            height: 120,
             width: double.infinity,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(8),
               color: Colors.grey.shade200,
             ),
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.file_present, color: Colors.grey[400], size: 40),
+                  const SizedBox(height: 8),
+                  Text(
+                    'No file submitted',
+                    style: TextStyle(
+                      fontFamily: 'Regular',
+                      color: Colors.grey[600],
+                      fontSize: 12,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          )
+        else if (isPdf)
+          Container(
+            height: 120,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8),
+              color: Colors.grey.shade100,
+              border: Border.all(color: Colors.grey.shade300),
+            ),
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.picture_as_pdf, color: Colors.red[400], size: 50),
+                  const SizedBox(height: 8),
+                  Text(
+                    'PDF Document',
+                    style: TextStyle(
+                      fontFamily: 'Medium',
+                      color: blue,
+                      fontSize: 12,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: SelectableText(
+                      url,
+                      style: const TextStyle(fontSize: 10),
+                      maxLines: 1,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          )
+        else if (isImage)
+          Container(
+            height: 200,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8),
+              color: Colors.grey.shade200,
+              border: Border.all(color: Colors.grey.shade300),
+            ),
             clipBehavior: Clip.antiAlias,
             child: Image.network(
               url,
               fit: BoxFit.contain,
+              headers: const {
+                'Access-Control-Allow-Origin': '*',
+              },
+              loadingBuilder: (context, child, loadingProgress) {
+                if (loadingProgress == null) return child;
+                return Center(
+                  child: CircularProgressIndicator(
+                    value: loadingProgress.expectedTotalBytes != null
+                        ? loadingProgress.cumulativeBytesLoaded /
+                            loadingProgress.expectedTotalBytes!
+                        : null,
+                  ),
+                );
+              },
               errorBuilder: (context, error, stackTrace) {
                 return Center(
                   child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: SelectableText(
-                      url,
-                      style: const TextStyle(fontSize: 10),
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.broken_image,
+                            color: Colors.grey[400], size: 40),
+                        const SizedBox(height: 8),
+                        Text(
+                          'Failed to load image',
+                          style: TextStyle(
+                            fontFamily: 'Regular',
+                            color: Colors.grey[600],
+                            fontSize: 12,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: Colors.grey.shade100,
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: SelectableText(
+                            url,
+                            style: const TextStyle(fontSize: 10),
+                            maxLines: 3,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 );
               },
+            ),
+          )
+        else
+          Container(
+            height: 120,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8),
+              color: Colors.grey.shade100,
+              border: Border.all(color: Colors.grey.shade300),
+            ),
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.insert_drive_file,
+                      color: Colors.blue[400], size: 50),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Document File',
+                    style: TextStyle(
+                      fontFamily: 'Medium',
+                      color: blue,
+                      fontSize: 12,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: SelectableText(
+                      url,
+                      style: const TextStyle(fontSize: 10),
+                      maxLines: 1,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
       ],

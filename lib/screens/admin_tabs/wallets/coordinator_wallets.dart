@@ -1,7 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:juan_million/utlis/app_constants.dart';
 import 'package:juan_million/utlis/colors.dart';
+import 'package:juan_million/widgets/textfield_widget.dart';
+import 'package:juan_million/widgets/toast_widget.dart';
 
 import '../../../widgets/text_widget.dart';
 
@@ -249,6 +252,9 @@ class _CoordinatorWalletsState extends State<CoordinatorWallets> {
 
   showDetails(data) {
     final approved = data['approved'] ?? false;
+    final reloadAmountController = TextEditingController();
+    final resetEmailController =
+        TextEditingController(text: data['email'] ?? '');
 
     showDialog(
       context: context,
@@ -310,6 +316,207 @@ class _CoordinatorWalletsState extends State<CoordinatorWallets> {
                 fontSize: 24,
                 fontFamily: 'Bold',
                 color: primary,
+              ),
+              const SizedBox(height: 20),
+              const Divider(),
+              const SizedBox(height: 10),
+
+              // Reload Wallet Section
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  TextWidget(
+                    text: 'Reload Wallet',
+                    fontSize: 14,
+                    fontFamily: 'Bold',
+                    color: Colors.black,
+                  ),
+                  IconButton(
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                            title: TextWidget(
+                              text: 'Reload Wallet',
+                              fontSize: 18,
+                              fontFamily: 'Bold',
+                            ),
+                            content: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                TextWidget(
+                                  text:
+                                      'Current Balance: ${AppConstants.formatNumberWithPeso(data['wallet'] ?? 0)}',
+                                  fontSize: 14,
+                                  color: Colors.grey,
+                                ),
+                                const SizedBox(height: 12),
+                                TextFieldWidget(
+                                  inputType: TextInputType.number,
+                                  controller: reloadAmountController,
+                                  label: 'Amount to Add',
+                                  hint: 'Enter amount',
+                                ),
+                              ],
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                child: TextWidget(
+                                  text: 'Cancel',
+                                  fontSize: 14,
+                                ),
+                              ),
+                              ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: primary,
+                                ),
+                                onPressed: () async {
+                                  if (reloadAmountController.text.isEmpty) {
+                                    showToast('Please enter an amount');
+                                    return;
+                                  }
+
+                                  final amount =
+                                      int.tryParse(reloadAmountController.text);
+                                  if (amount == null || amount <= 0) {
+                                    showToast('Please enter a valid amount');
+                                    return;
+                                  }
+
+                                  try {
+                                    await FirebaseFirestore.instance
+                                        .collection('Coordinator')
+                                        .doc(data.id)
+                                        .update({
+                                      'wallet': FieldValue.increment(amount),
+                                    });
+
+                                    if (context.mounted) {
+                                      Navigator.pop(context);
+                                      showToast(
+                                          'Wallet reloaded successfully!');
+                                    }
+                                  } catch (e) {
+                                    showToast('Error reloading wallet: $e');
+                                  }
+                                },
+                                child: TextWidget(
+                                  text: 'Reload',
+                                  fontSize: 14,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    },
+                    icon: Icon(Icons.add_circle, color: primary),
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 10),
+
+              // Reset Password Section
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  TextWidget(
+                    text: 'Reset Password',
+                    fontSize: 14,
+                    fontFamily: 'Bold',
+                    color: Colors.black,
+                  ),
+                  IconButton(
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                            title: TextWidget(
+                              text: 'Reset Password',
+                              fontSize: 18,
+                              fontFamily: 'Bold',
+                            ),
+                            content: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                TextWidget(
+                                  text: 'Send password reset email to:',
+                                  fontSize: 14,
+                                  color: Colors.grey,
+                                ),
+                                const SizedBox(height: 12),
+                                TextFieldWidget(
+                                  inputType: TextInputType.emailAddress,
+                                  controller: resetEmailController,
+                                  label: 'Email Address',
+                                  hint: 'Enter email',
+                                ),
+                              ],
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                child: TextWidget(
+                                  text: 'Cancel',
+                                  fontSize: 14,
+                                ),
+                              ),
+                              ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.orange,
+                                ),
+                                onPressed: () async {
+                                  if (resetEmailController.text.isEmpty) {
+                                    showToast('Please enter an email address');
+                                    return;
+                                  }
+
+                                  try {
+                                    await FirebaseAuth.instance
+                                        .sendPasswordResetEmail(
+                                      email: resetEmailController.text.trim(),
+                                    );
+
+                                    if (context.mounted) {
+                                      Navigator.pop(context);
+                                      showToast('Password reset email sent!');
+                                    }
+                                  } on FirebaseAuthException catch (e) {
+                                    String message =
+                                        'Error sending reset email';
+                                    if (e.code == 'user-not-found') {
+                                      message = 'No user found with this email';
+                                    } else if (e.code == 'invalid-email') {
+                                      message = 'Invalid email address';
+                                    }
+                                    showToast(message);
+                                  } catch (e) {
+                                    showToast('Error: $e');
+                                  }
+                                },
+                                child: TextWidget(
+                                  text: 'Send Reset Email',
+                                  fontSize: 14,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    },
+                    icon: Icon(Icons.lock_reset, color: Colors.orange),
+                  ),
+                ],
               ),
             ],
           ),
