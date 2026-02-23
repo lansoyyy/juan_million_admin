@@ -34,214 +34,235 @@ class _CoordinatorWalletsState extends State<CoordinatorWallets> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     StreamBuilder<QuerySnapshot>(
-                        stream: FirebaseFirestore.instance
-                            .collection('Coordinator')
-                            .snapshots(),
-                        builder: (BuildContext context,
-                            AsyncSnapshot<QuerySnapshot> snapshot) {
-                          if (snapshot.hasError) {
-                            print(snapshot.error);
-                            return const Center(child: Text('Error'));
-                          }
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return const Padding(
-                              padding: EdgeInsets.only(top: 50),
-                              child: Center(
+                      stream: FirebaseFirestore.instance
+                          .collection('Coordinator')
+                          .snapshots(),
+                      builder:
+                          (
+                            BuildContext context,
+                            AsyncSnapshot<QuerySnapshot> snapshot,
+                          ) {
+                            if (snapshot.hasError) {
+                              print(snapshot.error);
+                              return const Center(child: Text('Error'));
+                            }
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return const Padding(
+                                padding: EdgeInsets.only(top: 50),
+                                child: Center(
                                   child: CircularProgressIndicator(
-                                color: Colors.black,
-                              )),
-                            );
-                          }
+                                    color: Colors.black,
+                                  ),
+                                ),
+                              );
+                            }
 
-                          final data = snapshot.data;
-                          if (data == null) {
+                            final data = snapshot.data;
+                            if (data == null) {
+                              return TextWidget(
+                                text: '0 Total Coordinators',
+                                fontSize: 14,
+                                fontFamily: 'Regular',
+                                color: Colors.black,
+                              );
+                            }
                             return TextWidget(
-                              text: '0 Total Coordinators',
+                              text:
+                                  '${data.docs.length.toString()} Total Coordinators',
                               fontSize: 14,
                               fontFamily: 'Regular',
                               color: Colors.black,
                             );
-                          }
-                          return TextWidget(
-                            text:
-                                '${data.docs.length.toString()} Total Coordinators',
-                            fontSize: 14,
-                            fontFamily: 'Regular',
-                            color: Colors.black,
-                          );
-                        }),
+                          },
+                    ),
                     StreamBuilder<QuerySnapshot>(
-                        stream: FirebaseFirestore.instance
-                            .collection('Coordinator')
-                            .snapshots(),
-                        builder: (BuildContext context,
-                            AsyncSnapshot<QuerySnapshot> snapshot) {
-                          if (snapshot.hasError) {
-                            print(snapshot.error);
-                            return const Center(child: Text('Error'));
-                          }
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return const Padding(
-                              padding: EdgeInsets.only(top: 50),
-                              child: Center(
+                      stream: FirebaseFirestore.instance
+                          .collection('Coordinator')
+                          .snapshots(),
+                      builder:
+                          (
+                            BuildContext context,
+                            AsyncSnapshot<QuerySnapshot> snapshot,
+                          ) {
+                            if (snapshot.hasError) {
+                              print(snapshot.error);
+                              return const Center(child: Text('Error'));
+                            }
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return const Padding(
+                                padding: EdgeInsets.only(top: 50),
+                                child: Center(
                                   child: CircularProgressIndicator(
-                                color: Colors.black,
-                              )),
-                            );
-                          }
+                                    color: Colors.black,
+                                  ),
+                                ),
+                              );
+                            }
 
-                          final data = snapshot.data;
-                          if (data == null) {
+                            final data = snapshot.data;
+                            if (data == null) {
+                              return TextWidget(
+                                text: AppConstants.formatNumberWithPeso(0),
+                                fontSize: 28,
+                                fontFamily: 'Bold',
+                                color: primary,
+                              );
+                            }
+
+                            List itemData = data.docs;
+                            int total = 0;
+
+                            for (int i = 0; i < itemData.length; i++) {
+                              final wallet = itemData[i]['wallet'];
+                              if (wallet != null) {
+                                total += int.parse(wallet.toString());
+                              }
+                            }
                             return TextWidget(
-                              text: AppConstants.formatNumberWithPeso(0),
+                              text: AppConstants.formatNumberWithPeso(total),
                               fontSize: 28,
                               fontFamily: 'Bold',
                               color: primary,
                             );
-                          }
-
-                          List itemData = data.docs;
-                          int total = 0;
-
-                          for (int i = 0; i < itemData.length; i++) {
-                            final wallet = itemData[i]['wallet'];
-                            if (wallet != null) {
-                              total += int.parse(wallet.toString());
-                            }
-                          }
-                          return TextWidget(
-                            text: AppConstants.formatNumberWithPeso(total),
-                            fontSize: 28,
-                            fontFamily: 'Bold',
-                            color: primary,
-                          );
-                        }),
+                          },
+                    ),
                   ],
                 ),
-                const SizedBox(
-                  height: 10,
-                ),
+                const SizedBox(height: 10),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(0, 10, 0, 20),
                   child: Container(
                     height: 50,
                     width: double.infinity,
                     decoration: BoxDecoration(
-                        border: Border.all(
-                          color: Colors.black,
-                          width: 0.5,
-                        ),
-                        borderRadius: BorderRadius.circular(100)),
+                      border: Border.all(color: Colors.black, width: 0.5),
+                      borderRadius: BorderRadius.circular(100),
+                    ),
                     child: Padding(
                       padding: const EdgeInsets.only(left: 10, right: 10),
                       child: TextFormField(
                         style: const TextStyle(
-                            color: Colors.black,
-                            fontFamily: 'Regular',
-                            fontSize: 14),
+                          color: Colors.black,
+                          fontFamily: 'Regular',
+                          fontSize: 14,
+                        ),
                         onChanged: (value) {
                           setState(() {
                             nameSearched = value;
                           });
                         },
                         decoration: const InputDecoration(
-                            labelStyle: TextStyle(
-                              color: Colors.black,
-                            ),
-                            hintText: 'Search Coordinators',
-                            hintStyle: TextStyle(fontFamily: 'Bold'),
-                            prefixIcon: Icon(
-                              Icons.search,
-                              color: Colors.grey,
-                            )),
+                          labelStyle: TextStyle(color: Colors.black),
+                          hintText: 'Search Coordinators',
+                          hintStyle: TextStyle(fontFamily: 'Bold'),
+                          prefixIcon: Icon(Icons.search, color: Colors.grey),
+                        ),
                         controller: searchController,
                       ),
                     ),
                   ),
                 ),
                 StreamBuilder<QuerySnapshot>(
-                    stream: FirebaseFirestore.instance
-                        .collection('Coordinator')
-                        .where('name',
-                            isGreaterThanOrEqualTo:
-                                toBeginningOfSentenceCase(nameSearched))
-                        .where('name',
-                            isLessThan:
-                                '${toBeginningOfSentenceCase(nameSearched)}z')
-                        .snapshots(),
-                    builder: (BuildContext context,
-                        AsyncSnapshot<QuerySnapshot> snapshot) {
-                      if (snapshot.hasError) {
-                        print(snapshot.error);
-                        return const Center(child: Text('Error'));
-                      }
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const Padding(
-                          padding: EdgeInsets.only(top: 50),
-                          child: Center(
+                  stream: FirebaseFirestore.instance
+                      .collection('Coordinator')
+                      .where(
+                        'name',
+                        isGreaterThanOrEqualTo: toBeginningOfSentenceCase(
+                          nameSearched,
+                        ),
+                      )
+                      .where(
+                        'name',
+                        isLessThan:
+                            '${toBeginningOfSentenceCase(nameSearched)}z',
+                      )
+                      .snapshots(),
+                  builder:
+                      (
+                        BuildContext context,
+                        AsyncSnapshot<QuerySnapshot> snapshot,
+                      ) {
+                        if (snapshot.hasError) {
+                          print(snapshot.error);
+                          return const Center(child: Text('Error'));
+                        }
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Padding(
+                            padding: EdgeInsets.only(top: 50),
+                            child: Center(
                               child: CircularProgressIndicator(
-                            color: Colors.black,
-                          )),
-                        );
-                      }
-
-                      final data = snapshot.data;
-                      if (data == null || data.docs.isEmpty) {
-                        return const Center(
-                          child: Text('No coordinators found.'),
-                        );
-                      }
-
-                      return DataTable(columns: [
-                        DataColumn(
-                          label: TextWidget(
-                            text: 'No.',
-                            fontSize: 16,
-                            fontFamily: 'Bold',
-                          ),
-                        ),
-                        DataColumn(
-                          label: TextWidget(
-                            text: 'Name',
-                            fontSize: 16,
-                            fontFamily: 'Bold',
-                          ),
-                        ),
-                        DataColumn(
-                          label: TextWidget(
-                            text: 'Wallet',
-                            fontSize: 16,
-                            fontFamily: 'Bold',
-                          ),
-                        ),
-                      ], rows: [
-                        for (int i = 0; i < data.docs.length; i++)
-                          DataRow(cells: [
-                            DataCell(
-                              TextWidget(
-                                text: '${i + 1}',
-                                fontSize: 14,
+                                color: Colors.black,
                               ),
                             ),
-                            DataCell(GestureDetector(
-                              onTap: () {
-                                showDetails(data.docs[i]);
-                              },
-                              child: TextWidget(
-                                text: data.docs[i]['name'] ?? 'No Name',
-                                fontSize: 14,
+                          );
+                        }
+
+                        final data = snapshot.data;
+                        if (data == null || data.docs.isEmpty) {
+                          return const Center(
+                            child: Text('No coordinators found.'),
+                          );
+                        }
+
+                        return DataTable(
+                          columns: [
+                            DataColumn(
+                              label: TextWidget(
+                                text: 'No.',
+                                fontSize: 16,
+                                fontFamily: 'Bold',
                               ),
-                            )),
-                            DataCell(TextWidget(
-                              text: AppConstants.formatNumberWithPeso(
-                                  data.docs[i]['wallet'] ?? 0),
-                              fontSize: 14,
-                            )),
-                          ])
-                      ]);
-                    })
+                            ),
+                            DataColumn(
+                              label: TextWidget(
+                                text: 'Name',
+                                fontSize: 16,
+                                fontFamily: 'Bold',
+                              ),
+                            ),
+                            DataColumn(
+                              label: TextWidget(
+                                text: 'Wallet',
+                                fontSize: 16,
+                                fontFamily: 'Bold',
+                              ),
+                            ),
+                          ],
+                          rows: [
+                            for (int i = 0; i < data.docs.length; i++)
+                              DataRow(
+                                cells: [
+                                  DataCell(
+                                    TextWidget(text: '${i + 1}', fontSize: 14),
+                                  ),
+                                  DataCell(
+                                    GestureDetector(
+                                      onTap: () {
+                                        showDetails(data.docs[i]);
+                                      },
+                                      child: TextWidget(
+                                        text: data.docs[i]['name'] ?? 'No Name',
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                  ),
+                                  DataCell(
+                                    TextWidget(
+                                      text: AppConstants.formatNumberWithPeso(
+                                        data.docs[i]['wallet'] ?? 0,
+                                      ),
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                          ],
+                        );
+                      },
+                ),
               ],
             ),
           ),
@@ -253,8 +274,9 @@ class _CoordinatorWalletsState extends State<CoordinatorWallets> {
   showDetails(data) {
     final approved = data['approved'] ?? false;
     final reloadAmountController = TextEditingController();
-    final resetEmailController =
-        TextEditingController(text: data['email'] ?? '');
+    final resetEmailController = TextEditingController(
+      text: data['email'] ?? '',
+    );
 
     showDialog(
       context: context,
@@ -274,9 +296,7 @@ class _CoordinatorWalletsState extends State<CoordinatorWallets> {
                   color: Colors.white,
                 ),
               ),
-              const SizedBox(
-                height: 10,
-              ),
+              const SizedBox(height: 10),
               TextWidget(
                 text: data['name'] ?? 'No Name',
                 fontSize: 18,
@@ -289,8 +309,10 @@ class _CoordinatorWalletsState extends State<CoordinatorWallets> {
               ),
               const Divider(),
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
                   color: approved
                       ? Colors.green.withOpacity(0.1)
@@ -365,10 +387,7 @@ class _CoordinatorWalletsState extends State<CoordinatorWallets> {
                                 onPressed: () {
                                   Navigator.pop(context);
                                 },
-                                child: TextWidget(
-                                  text: 'Cancel',
-                                  fontSize: 14,
-                                ),
+                                child: TextWidget(text: 'Cancel', fontSize: 14),
                               ),
                               ElevatedButton(
                                 style: ElevatedButton.styleFrom(
@@ -380,25 +399,63 @@ class _CoordinatorWalletsState extends State<CoordinatorWallets> {
                                     return;
                                   }
 
-                                  final amount =
-                                      int.tryParse(reloadAmountController.text);
+                                  final amount = int.tryParse(
+                                    reloadAmountController.text,
+                                  );
                                   if (amount == null || amount <= 0) {
                                     showToast('Please enter a valid amount');
                                     return;
                                   }
 
                                   try {
-                                    await FirebaseFirestore.instance
+                                    final batch = FirebaseFirestore.instance
+                                        .batch();
+                                    final coordRef = FirebaseFirestore.instance
                                         .collection('Coordinator')
-                                        .doc(data.id)
-                                        .update({
+                                        .doc(data.id);
+                                    final walletDoc = FirebaseFirestore.instance
+                                        .collection('Wallets')
+                                        .doc();
+                                    final pointsDoc = FirebaseFirestore.instance
+                                        .collection('Points')
+                                        .doc();
+
+                                    batch.update(coordRef, {
                                       'wallet': FieldValue.increment(amount),
                                     });
+
+                                    batch.set(walletDoc, {
+                                      'pts': amount,
+                                      'from': FirebaseAuth
+                                          .instance
+                                          .currentUser!
+                                          .uid,
+                                      'uid': data.id,
+                                      'id': walletDoc.id,
+                                      'dateTime': DateTime.now(),
+                                      'type': 'Admin Reload',
+                                      'cashier': 'Admin',
+                                    });
+
+                                    batch.set(pointsDoc, {
+                                      'pts': amount,
+                                      'qty': 1,
+                                      'cashier': 'Admin',
+                                      'uid': data.id,
+                                      'id': pointsDoc.id,
+                                      'scanned': true,
+                                      'scannedId': '',
+                                      'dateTime': DateTime.now(),
+                                      'type': 'Admin Reload',
+                                    });
+
+                                    await batch.commit();
 
                                     if (context.mounted) {
                                       Navigator.pop(context);
                                       showToast(
-                                          'Wallet reloaded successfully!');
+                                        'Wallet reloaded successfully!',
+                                      );
                                     }
                                   } catch (e) {
                                     showToast('Error reloading wallet: $e');
@@ -465,10 +522,7 @@ class _CoordinatorWalletsState extends State<CoordinatorWallets> {
                                 onPressed: () {
                                   Navigator.pop(context);
                                 },
-                                child: TextWidget(
-                                  text: 'Cancel',
-                                  fontSize: 14,
-                                ),
+                                child: TextWidget(text: 'Cancel', fontSize: 14),
                               ),
                               ElevatedButton(
                                 style: ElevatedButton.styleFrom(
@@ -483,8 +537,9 @@ class _CoordinatorWalletsState extends State<CoordinatorWallets> {
                                   try {
                                     await FirebaseAuth.instance
                                         .sendPasswordResetEmail(
-                                      email: resetEmailController.text.trim(),
-                                    );
+                                          email: resetEmailController.text
+                                              .trim(),
+                                        );
 
                                     if (context.mounted) {
                                       Navigator.pop(context);
@@ -525,10 +580,7 @@ class _CoordinatorWalletsState extends State<CoordinatorWallets> {
               onPressed: () {
                 Navigator.pop(context);
               },
-              child: TextWidget(
-                text: 'Close',
-                fontSize: 14,
-              ),
+              child: TextWidget(text: 'Close', fontSize: 14),
             ),
           ],
         );

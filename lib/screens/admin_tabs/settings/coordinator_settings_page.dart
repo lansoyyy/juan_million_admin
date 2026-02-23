@@ -109,8 +109,9 @@ class _CoordinatorSettingsPageState extends State<CoordinatorSettingsPage> {
         },
       );
 
-      final ref = firebase_storage.FirebaseStorage.instance
-          .ref('AdminTemplates/coordinator/$type/$fileName');
+      final ref = firebase_storage.FirebaseStorage.instance.ref(
+        'AdminTemplates/coordinator/$type/$fileName',
+      );
       final bytes = pickedFile.bytes!;
       final contentType = _getContentTypeFromExtension(fileName);
 
@@ -124,13 +125,10 @@ class _CoordinatorSettingsPageState extends State<CoordinatorSettingsPage> {
       await FirebaseFirestore.instance
           .collection('AdminConfig')
           .doc('CoordinatorSettings')
-          .set(
-        {
-          if (type == 'contract') 'standardContractUrl': url,
-          if (type == 'other') 'otherDocUrl': url,
-        },
-        SetOptions(merge: true),
-      );
+          .set({
+            if (type == 'contract') 'standardContractUrl': url,
+            if (type == 'other') 'otherDocUrl': url,
+          }, SetOptions(merge: true));
 
       if (!mounted) return;
 
@@ -215,7 +213,8 @@ class _CoordinatorSettingsPageState extends State<CoordinatorSettingsPage> {
 
   Widget _buildDocumentPreview(String title, String url) {
     final bool isPdf = url.toLowerCase().endsWith('.pdf');
-    final bool isImage = url.toLowerCase().endsWith('.jpg') ||
+    final bool isImage =
+        url.toLowerCase().endsWith('.jpg') ||
         url.toLowerCase().endsWith('.jpeg') ||
         url.toLowerCase().endsWith('.png') ||
         url.toLowerCase().endsWith('.gif') ||
@@ -224,11 +223,7 @@ class _CoordinatorSettingsPageState extends State<CoordinatorSettingsPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        TextWidget(
-          text: title,
-          fontSize: 14,
-          fontFamily: 'Bold',
-        ),
+        TextWidget(text: title, fontSize: 14, fontFamily: 'Bold'),
         const SizedBox(height: 8),
         if (url.isEmpty)
           Container(
@@ -305,16 +300,13 @@ class _CoordinatorSettingsPageState extends State<CoordinatorSettingsPage> {
             child: Image.network(
               url,
               fit: BoxFit.contain,
-              headers: const {
-                'Access-Control-Allow-Origin': '*',
-              },
               loadingBuilder: (context, child, loadingProgress) {
                 if (loadingProgress == null) return child;
                 return Center(
                   child: CircularProgressIndicator(
                     value: loadingProgress.expectedTotalBytes != null
                         ? loadingProgress.cumulativeBytesLoaded /
-                            loadingProgress.expectedTotalBytes!
+                              loadingProgress.expectedTotalBytes!
                         : null,
                   ),
                 );
@@ -326,8 +318,11 @@ class _CoordinatorSettingsPageState extends State<CoordinatorSettingsPage> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.broken_image,
-                            color: Colors.grey[400], size: 40),
+                        Icon(
+                          Icons.broken_image,
+                          color: Colors.grey[400],
+                          size: 40,
+                        ),
                         const SizedBox(height: 8),
                         Text(
                           'Failed to load image',
@@ -370,8 +365,11 @@ class _CoordinatorSettingsPageState extends State<CoordinatorSettingsPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.insert_drive_file,
-                      color: Colors.blue[400], size: 50),
+                  Icon(
+                    Icons.insert_drive_file,
+                    color: Colors.blue[400],
+                    size: 50,
+                  ),
                   const SizedBox(height: 8),
                   Text(
                     'Document File',
@@ -474,7 +472,8 @@ class _CoordinatorSettingsPageState extends State<CoordinatorSettingsPage> {
                 builder: (context, snapshot) {
                   if (snapshot.hasError) {
                     return const Center(
-                        child: Text('Error loading coordinators'));
+                      child: Text('Error loading coordinators'),
+                    );
                   }
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(child: CircularProgressIndicator());
@@ -539,10 +538,12 @@ class _CoordinatorSettingsPageState extends State<CoordinatorSettingsPage> {
                                           decoration: BoxDecoration(
                                             color: approved
                                                 ? Colors.green.withOpacity(0.1)
-                                                : Colors.orange
-                                                    .withOpacity(0.1),
-                                            borderRadius:
-                                                BorderRadius.circular(12),
+                                                : Colors.orange.withOpacity(
+                                                    0.1,
+                                                  ),
+                                            borderRadius: BorderRadius.circular(
+                                              12,
+                                            ),
                                           ),
                                           child: TextWidget(
                                             text: approved

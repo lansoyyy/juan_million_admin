@@ -37,11 +37,11 @@ class _CommunityWalletSettingsPageState
         final data = doc.data()!;
         totalRewardsController.text = (data['totalRewards'] ?? '').toString();
         capacityController.text = (data['capacity'] ?? '').toString();
-        companyPercentController.text =
-            (data['companyPercent'] ?? '').toString();
+        companyPercentController.text = (data['companyPercent'] ?? '')
+            .toString();
         itPercentController.text = (data['itPercent'] ?? '').toString();
-        rewardsPercentController.text =
-            (data['rewardsPercent'] ?? '').toString();
+        rewardsPercentController.text = (data['rewardsPercent'] ?? '')
+            .toString();
       }
     } finally {
       if (mounted) {
@@ -75,39 +75,52 @@ class _CommunityWalletSettingsPageState
         .collection('Community Wallet')
         .doc('settings')
         .set({
-      'totalRewards': totalRewards,
-      'capacity': capacity,
-      'companyPercent': company,
-      'itPercent': it,
-      'rewardsPercent': rewards,
-      'updatedAt': DateTime.now(),
-    }, SetOptions(merge: true));
+          'totalRewards': totalRewards,
+          'capacity': capacity,
+          'companyPercent': company,
+          'itPercent': it,
+          'rewardsPercent': rewards,
+          'updatedAt': DateTime.now(),
+        }, SetOptions(merge: true));
 
     // Also update the business wallet document with new values
     await FirebaseFirestore.instance
         .collection('Community Wallet')
         .doc('business')
         .set({
-      'totalRewards': totalRewards,
-      'capacity': capacity,
-      'companyPercent': company,
-      'itPercent': it,
-      'rewardsPercent': rewards,
-      'updatedAt': DateTime.now(),
-    }, SetOptions(merge: true));
+          'totalRewards': totalRewards,
+          'capacity': capacity,
+          'companyPercent': company,
+          'itPercent': it,
+          'rewardsPercent': rewards,
+          'updatedAt': DateTime.now(),
+        }, SetOptions(merge: true));
 
     // Also update the IT wallet document
     await FirebaseFirestore.instance
         .collection('Community Wallet')
         .doc('it')
         .set({
-      'totalRewards': totalRewards,
-      'capacity': capacity,
-      'companyPercent': company,
-      'itPercent': it,
-      'rewardsPercent': rewards,
-      'updatedAt': DateTime.now(),
-    }, SetOptions(merge: true));
+          'totalRewards': totalRewards,
+          'capacity': capacity,
+          'companyPercent': company,
+          'itPercent': it,
+          'rewardsPercent': rewards,
+          'updatedAt': DateTime.now(),
+        }, SetOptions(merge: true));
+
+    // Also update the main 'wallet' document which might be used by other parts of the app
+    await FirebaseFirestore.instance
+        .collection('Community Wallet')
+        .doc('wallet')
+        .set({
+          'totalRewards': totalRewards,
+          'capacity': capacity,
+          'companyPercent': company,
+          'itPercent': it,
+          'rewardsPercent': rewards,
+          'updatedAt': DateTime.now(),
+        }, SetOptions(merge: true));
 
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -150,12 +163,16 @@ class _CommunityWalletSettingsPageState
                   ),
                   const SizedBox(height: 16),
                   _buildNumberField(
-                      'Total Rewards Amount', totalRewardsController,
-                      hint: 'e.g. 100000'),
+                    'Total Rewards Amount',
+                    totalRewardsController,
+                    hint: 'e.g. 100000',
+                  ),
                   const SizedBox(height: 12),
                   _buildNumberField(
-                      'Community Wallet Capacity', capacityController,
-                      hint: 'Max points in community wallet'),
+                    'Community Wallet Capacity',
+                    capacityController,
+                    hint: 'Max points in community wallet',
+                  ),
                   const SizedBox(height: 24),
                   TextWidget(
                     text: 'Allocation Percentages',
@@ -204,8 +221,10 @@ class _CommunityWalletSettingsPageState
                       ),
                       child: const Text(
                         'Save Settings',
-                        style:
-                            TextStyle(fontFamily: 'Bold', color: Colors.white),
+                        style: TextStyle(
+                          fontFamily: 'Bold',
+                          color: Colors.white,
+                        ),
                       ),
                     ),
                   ),
@@ -216,25 +235,22 @@ class _CommunityWalletSettingsPageState
     );
   }
 
-  Widget _buildNumberField(String label, TextEditingController controller,
-      {String? hint}) {
+  Widget _buildNumberField(
+    String label,
+    TextEditingController controller, {
+    String? hint,
+  }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        TextWidget(
-          text: label,
-          fontSize: 12,
-          fontFamily: 'Medium',
-        ),
+        TextWidget(text: label, fontSize: 12, fontFamily: 'Medium'),
         const SizedBox(height: 4),
         TextField(
           controller: controller,
           keyboardType: TextInputType.number,
           decoration: InputDecoration(
             hintText: hint,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
             isDense: true,
           ),
         ),
