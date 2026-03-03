@@ -165,20 +165,24 @@ class _CoordinatorWalletsState extends State<CoordinatorWallets> {
                   ),
                 ),
                 StreamBuilder<QuerySnapshot>(
-                  stream: FirebaseFirestore.instance
-                      .collection('Coordinator')
-                      .where(
-                        'name',
-                        isGreaterThanOrEqualTo: toBeginningOfSentenceCase(
-                          nameSearched,
-                        ),
-                      )
-                      .where(
-                        'name',
-                        isLessThan:
-                            '${toBeginningOfSentenceCase(nameSearched)}z',
-                      )
-                      .snapshots(),
+                  stream: nameSearched.isEmpty
+                      ? FirebaseFirestore.instance
+                          .collection('Coordinator')
+                          .snapshots()
+                      : FirebaseFirestore.instance
+                          .collection('Coordinator')
+                          .where(
+                            'name',
+                            isGreaterThanOrEqualTo: toBeginningOfSentenceCase(
+                              nameSearched,
+                            ),
+                          )
+                          .where(
+                            'name',
+                            isLessThan:
+                                '${toBeginningOfSentenceCase(nameSearched)}z',
+                          )
+                          .snapshots(),
                   builder:
                       (
                         BuildContext context,
