@@ -167,22 +167,22 @@ class _CoordinatorWalletsState extends State<CoordinatorWallets> {
                 StreamBuilder<QuerySnapshot>(
                   stream: nameSearched.isEmpty
                       ? FirebaseFirestore.instance
-                          .collection('Coordinator')
-                          .snapshots()
+                            .collection('Coordinator')
+                            .snapshots()
                       : FirebaseFirestore.instance
-                          .collection('Coordinator')
-                          .where(
-                            'name',
-                            isGreaterThanOrEqualTo: toBeginningOfSentenceCase(
-                              nameSearched,
-                            ),
-                          )
-                          .where(
-                            'name',
-                            isLessThan:
-                                '${toBeginningOfSentenceCase(nameSearched)}z',
-                          )
-                          .snapshots(),
+                            .collection('Coordinator')
+                            .where(
+                              'name',
+                              isGreaterThanOrEqualTo: toBeginningOfSentenceCase(
+                                nameSearched,
+                              ),
+                            )
+                            .where(
+                              'name',
+                              isLessThan:
+                                  '${toBeginningOfSentenceCase(nameSearched)}z',
+                            )
+                            .snapshots(),
                   builder:
                       (
                         BuildContext context,
@@ -399,7 +399,10 @@ class _CoordinatorWalletsState extends State<CoordinatorWallets> {
                                 ),
                                 onPressed: () async {
                                   if (reloadAmountController.text.isEmpty) {
-                                    showToast('Please enter an amount');
+                                    showToast(
+                                      'Please enter an amount',
+                                      type: ToastType.error,
+                                    );
                                     return;
                                   }
 
@@ -407,7 +410,10 @@ class _CoordinatorWalletsState extends State<CoordinatorWallets> {
                                     reloadAmountController.text,
                                   );
                                   if (amount == null || amount <= 0) {
-                                    showToast('Please enter a valid amount');
+                                    showToast(
+                                      'Please enter a valid amount',
+                                      type: ToastType.error,
+                                    );
                                     return;
                                   }
 
@@ -457,12 +463,24 @@ class _CoordinatorWalletsState extends State<CoordinatorWallets> {
 
                                     if (context.mounted) {
                                       Navigator.pop(context);
+                                      _showReloadReceiptDialog(
+                                        coordinatorName:
+                                            (data['name'] ?? 'Coordinator')
+                                                .toString(),
+                                        coordinatorId: data.id,
+                                        amount: amount,
+                                        referenceId: walletDoc.id,
+                                      );
                                       showToast(
                                         'Wallet reloaded successfully!',
+                                        type: ToastType.success,
                                       );
                                     }
                                   } catch (e) {
-                                    showToast('Error reloading wallet: $e');
+                                    showToast(
+                                      'Error reloading wallet: $e',
+                                      type: ToastType.error,
+                                    );
                                   }
                                 },
                                 child: TextWidget(
@@ -534,7 +552,10 @@ class _CoordinatorWalletsState extends State<CoordinatorWallets> {
                                 ),
                                 onPressed: () async {
                                   if (resetEmailController.text.isEmpty) {
-                                    showToast('Please enter an email address');
+                                    showToast(
+                                      'Please enter an email address',
+                                      type: ToastType.error,
+                                    );
                                     return;
                                   }
 
@@ -547,7 +568,10 @@ class _CoordinatorWalletsState extends State<CoordinatorWallets> {
 
                                     if (context.mounted) {
                                       Navigator.pop(context);
-                                      showToast('Password reset email sent!');
+                                      showToast(
+                                        'Password reset email sent!',
+                                        type: ToastType.success,
+                                      );
                                     }
                                   } on FirebaseAuthException catch (e) {
                                     String message =
@@ -557,9 +581,12 @@ class _CoordinatorWalletsState extends State<CoordinatorWallets> {
                                     } else if (e.code == 'invalid-email') {
                                       message = 'Invalid email address';
                                     }
-                                    showToast(message);
+                                    showToast(message, type: ToastType.error);
                                   } catch (e) {
-                                    showToast('Error: $e');
+                                    showToast(
+                                      'Error: $e',
+                                      type: ToastType.error,
+                                    );
                                   }
                                 },
                                 child: TextWidget(
@@ -585,6 +612,70 @@ class _CoordinatorWalletsState extends State<CoordinatorWallets> {
                 Navigator.pop(context);
               },
               child: TextWidget(text: 'Close', fontSize: 14),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showReloadReceiptDialog({
+    required String coordinatorName,
+    required String coordinatorId,
+    required int amount,
+    required String referenceId,
+  }) {
+    final String timestamp = DateFormat.yMMMd().add_jm().format(DateTime.now());
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: TextWidget(
+            text: 'Reload Receipt',
+            fontSize: 18,
+            fontFamily: 'Bold',
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              TextWidget(
+                text: 'Coordinator: $coordinatorName',
+                fontSize: 13,
+                fontFamily: 'Medium',
+              ),
+              const SizedBox(height: 6),
+              TextWidget(
+                text: 'Coordinator ID: $coordinatorId',
+                fontSize: 12,
+                color: Colors.grey,
+              ),
+              const SizedBox(height: 6),
+              TextWidget(
+                text: 'Amount: ${AppConstants.formatNumberWithPeso(amount)}',
+                fontSize: 14,
+                fontFamily: 'Bold',
+                color: primary,
+              ),
+              const SizedBox(height: 6),
+              TextWidget(
+                text: 'Reference: $referenceId',
+                fontSize: 12,
+                fontFamily: 'Medium',
+              ),
+              const SizedBox(height: 6),
+              TextWidget(
+                text: 'Date: $timestamp',
+                fontSize: 12,
+                color: Colors.grey,
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: TextWidget(text: 'Done', fontSize: 14),
             ),
           ],
         );

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:juan_million/screens/admin_tabs/settings/coordinator_settings_page.dart';
 import 'package:juan_million/screens/admin_tabs/settings/community_wallet_settings_page.dart';
 import 'package:juan_million/screens/admin_tabs/settings/affiliate_display_settings_page.dart';
+import 'package:juan_million/screens/admin_tabs/settings/signup_defaults_page.dart';
+import 'package:juan_million/screens/admin_tabs/settings/boosters_pricing_page.dart';
 import 'package:juan_million/utlis/colors.dart';
 import 'package:juan_million/widgets/text_widget.dart';
 
@@ -30,7 +32,7 @@ class TemplatesTab extends StatelessWidget {
                 const SizedBox(height: 8),
                 TextWidget(
                   text:
-                      'Configure coordinator approvals, community wallet rules, and affiliate display settings.',
+                      'Configure onboarding defaults, coordinator approvals, community wallet rules, and booster pricing.',
                   fontSize: isMobile ? 12 : 14,
                   fontFamily: 'Regular',
                   color: Colors.grey,
@@ -44,6 +46,21 @@ class TemplatesTab extends StatelessWidget {
                     mainAxisSpacing: 16,
                     childAspectRatio: isMobile ? 4 / 3 : 3 / 2,
                     children: [
+                      _buildTemplateCard(
+                        context,
+                        title: 'Global Signup Defaults',
+                        description:
+                            'Set default starting values for new affiliate and coordinator accounts.',
+                        icon: Icons.tune,
+                        color: Colors.teal,
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => const SignupDefaultsPage(),
+                            ),
+                          );
+                        },
+                      ),
                       _buildTemplateCard(
                         context,
                         title: 'Coordinator Settings',
@@ -72,6 +89,21 @@ class TemplatesTab extends StatelessWidget {
                             MaterialPageRoute(
                               builder: (context) =>
                                   const CommunityWalletSettingsPage(),
+                            ),
+                          );
+                        },
+                      ),
+                      _buildTemplateCard(
+                        context,
+                        title: 'Boosters Pricing',
+                        description:
+                            'Create, edit, and remove booster packages used in all store pages.',
+                        icon: Icons.price_change,
+                        color: Colors.deepOrange,
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => const BoostersPricingPage(),
                             ),
                           );
                         },
@@ -137,11 +169,7 @@ class TemplatesTab extends StatelessWidget {
                 color: color.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Icon(
-                icon,
-                color: color,
-                size: 28,
-              ),
+              child: Icon(icon, color: color, size: 28),
             ),
             const SizedBox(height: 12),
             TextWidget(
